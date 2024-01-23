@@ -28,6 +28,9 @@ jobs:
         id: setup
         with:
           version: '1.10.0'          
+
+      - name: install packer plugin
+        run : packer init .
   
       - name: Validate Packer Template
         run: packer validate .  
