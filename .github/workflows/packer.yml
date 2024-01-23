@@ -1,0 +1,38 @@
+name: Packer Flow
+
+on:
+  pull_request:
+    types: [labeled]
+
+  workflow_dispatch:
+    inputs:
+      tag_override:
+        description: 'Tag release as (optional)'
+        required: false
+
+jobs:
+  release_ami:
+    name: Release AMI
+    if: ${{ github.event.label.name == 'release-ami' || (github.event_name == 'workflow_dispatch' && github.workflow == 'Packer Flow')}}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@v1
+        with:
+          packer-version: '1.10.0'  # Specify the Packer version
+    
+      - name: Validate Packer Template
+        run: packer validate .  
+
+      - name: Build AMI with Packer
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: packer build .
