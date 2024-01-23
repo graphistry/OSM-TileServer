@@ -23,11 +23,12 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Set up Packer
-        uses: hashicorp/setup-packer@v1
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        id: setup
         with:
-          packer-version: '1.10.0'  # Specify the Packer version
-    
+          version: '1.10.0'          
+  
       - name: Validate Packer Template
         run: packer validate .  
 
